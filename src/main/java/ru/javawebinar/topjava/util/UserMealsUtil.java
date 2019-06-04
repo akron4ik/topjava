@@ -21,22 +21,14 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,20,0), "Ужин", 510)
         );
         getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
-
-
-
     }
 
     public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate,Integer> dayAndCalories = mealList.stream()
                 .collect(Collectors.toMap(k->k.getDateTime().toLocalDate() , v->v.getCalories(), (calories1,calories2)->calories1 + calories2));
 
-        List<UserMealWithExceed> result = new ArrayList<>();
-        for (UserMeal u: mealList) {
-            if (TimeUtil.isBetween(u.getDateTime().toLocalTime(), startTime, endTime)){
-                result.add(new UserMealWithExceed(u.getDateTime(),u.getDescription(),u.getCalories(),
-                        dayAndCalories.get(u.getDateTime().toLocalDate())>caloriesPerDay));
-            }
-        }
-        return result;
+        return mealList.stream().filter(p->TimeUtil.isBetween(p.getDateTime().toLocalTime(),startTime,endTime))
+                .map(v-> new UserMealWithExceed(v.getDateTime(),v.getDescription(),v.getCalories(),
+                        dayAndCalories.get(v.getDateTime().toLocalDate())>caloriesPerDay )).collect(Collectors.toList());
     }
 }
