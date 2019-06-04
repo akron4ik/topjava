@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -21,25 +22,19 @@ public class UserMealsUtil {
         );
         getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
 
+
+
     }
 
     public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        List<UserMealWithExceed> result = new ArrayList<>();//итоговый список в который добавляем все подходящие записи
-        Map<LocalDate, Integer> dayAndCalories = new HashMap<>();//мапа для подсчета всех калорий в день
+        Map<LocalDate,Integer> dayAndCalories = mealList.stream()
+                .collect(Collectors.toMap(k->k.getDateTime().toLocalDate() , v->v.getCalories(), (calories1,calories2)->calories1 + calories2));
 
+        List<UserMealWithExceed> result = new ArrayList<>();
         for (UserMeal u: mealList) {
-           dayAndCalories.merge(u.getDateTime()//считаем все калории в день,
-                    .toLocalDate(), u.getCalories(), (a,b)-> b + u.getCalories());//ключ - день, значение - кол-во калорий
-        }
-
-        for (UserMeal u: mealList) {
-            if (TimeUtil.isBetween(u.getDateTime().toLocalTime(), startTime, endTime)
-                    && dayAndCalories.getOrDefault(u.getDateTime().toLocalDate(),0)>caloriesPerDay )  {
-                result.add(new UserMealWithExceed(u.getDateTime(),u.getDescription(),u.getCalories(), false));
-            }
-            else if (TimeUtil.isBetween(u.getDateTime().toLocalTime(), startTime, endTime)
-                    && dayAndCalories.getOrDefault(u.getDateTime().toLocalDate(),0)<caloriesPerDay ){
-                result.add(new UserMealWithExceed(u.getDateTime(),u.getDescription(),u.getCalories(), true));
+            if (TimeUtil.isBetween(u.getDateTime().toLocalTime(), startTime, endTime)){
+                result.add(new UserMealWithExceed(u.getDateTime(),u.getDescription(),u.getCalories(),
+                        dayAndCalories.get(u.getDateTime().toLocalDate())>caloriesPerDay));
             }
         }
         return result;
