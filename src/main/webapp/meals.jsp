@@ -16,7 +16,6 @@
 <hr>
 <h2>Meals</h2>
 
-
 <table>
     <thead>
     <tr>
@@ -25,14 +24,19 @@
         <th>Калории</th>
     </tr>
     </thead>
-    <c:forEach var="meal" items="${mealList}">
+    <c:forEach var="meal" items="${meals}">
         <tr style="${meal.excess ? "color:#ff0000" : "color: #32CD32"}">
+
             <td><c:out value="${meal.dateTime.format(format)}"/></td>
             <td><c:out value="${meal.description}"/></td>
             <td><c:out value="${meal.calories}"/></td>
+            <td>
+                <td><a href="meals?action=edit&mealId=<c:out value="${meal.id}"/>">Редактировать</a></td>
+                <td><a href="meals?action=delete&mealId=<c:out value="${meal.id}"/>">Удалить</a></td>
         </tr>
     </c:forEach>
 </table>
+<p><a href="meals?action=add">Добавить Еду</a></p>
 
 </body>
 </html>
