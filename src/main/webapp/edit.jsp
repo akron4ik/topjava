@@ -9,19 +9,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+<c:if test="${empty meal.id}">
+    <title>Add new meal</title>
+</c:if>
+<c:if test="${!empty meal.id}">
     <title>Edit meal</title>
+</c:if>
+
 </head>
 
 
 <body>
-<h3><a href="meals">Home</a></h3>
+<h3><a href="meals">Meals</a></h3>
 <hr>
 
 
 <form method="POST" name="addMeal">
 
 
-    <input type="hidden" readonly="readonly" name="mealId"
+    <input type="hidden" readonly="readonly" name="id"
                 value="<c:out value="${meal.id}" />"/>
     <p><label>Описание</label>
         <input type="text" name="description"
@@ -32,21 +38,15 @@
                value="<c:out value="${meal.calories}"/>"/></p>
 
     <p><label>Дата и время</label>
-        <c:if test="${empty meal.description}">
-        <input type="datetime" name="date" placeholder="ДД.ММ.ГГГГ ЧЧ:ММ"
-                value="${meal.dateTime.format(format)}"/></p>
-        </c:if>
-
-        <c:if test="${!empty meal.description}">
         <input type="datetime" name="date" placeholder="${meal.dateTime.format(format)}"
                value="${meal.dateTime.format(format)}"/></p>
-        </c:if>
 
 
-    <c:if test="${empty meal.description}">
+
+    <c:if test="${empty meal.id}">
         <input type="submit" value="Добавить">
     </c:if>
-    <c:if test="${!empty meal.description}">
+    <c:if test="${!empty meal.id}">
         <input type="submit" value="Редактировать">
     </c:if>
 

@@ -2,13 +2,10 @@ package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,50 +14,19 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 
 public class MealsUtil {
-    public static void main(String[] args) {
+    public static final Integer CALORIES_PER_DAY = 2000;
 
-    }
+    public static final List<Meal> MEAL_LIST = Arrays.asList(
+           new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
+           new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
+           new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
+           new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
+           new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
+           new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
 
-    public static List<MealTo> getFilteredWithExcess(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(
-                        Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
-//                      Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
-                );
+    );
 
-        return meals.stream()
-                .filter(meal -> TimeUtil.isBetween(meal.getTime(), startTime, endTime))
-                .map(meal -> createWithExcess(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
-                .collect(Collectors.toList());
-    }
-
-    public static List<MealTo> getFilteredWithExcessByCycle(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-
-        final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
-        meals.forEach(meal -> caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), Integer::sum));
-
-        final List<MealTo> mealsWithExcess = new ArrayList<>();
-        meals.forEach(meal -> {
-            if (TimeUtil.isBetween(meal.getTime(), startTime, endTime)) {
-                mealsWithExcess.add(createWithExcess(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay));
-            }
-        });
-        return mealsWithExcess;
-    }
-
-    public static List<MealTo> getFilteredWithExcessInOnePass(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Collection<List<Meal>> list = meals.stream()
-                .collect(Collectors.groupingBy(Meal::getDate)).values();
-
-        return list.stream().flatMap(dayMeals -> {
-            boolean excess = dayMeals.stream().mapToInt(Meal::getCalories).sum() > caloriesPerDay;
-            return dayMeals.stream().filter(meal ->
-                    TimeUtil.isBetween(meal.getTime(), startTime, endTime))
-                    .map(meal -> createWithExcess(meal, excess));
-        }).collect(toList());
-    }
-
-    public static List<MealTo> getFilteredWithExcessInOnePass2(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealTo> getFilteredWithExcessInOnePass2(Collection<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         final class Aggregate {
             private final List<Meal> dailyMeals = new ArrayList<>();
             private int dailySumOfCalories;
@@ -94,12 +60,10 @@ public class MealsUtil {
     }
 
     private static MealTo createWithExcess(Meal meal, boolean excess) {
-        MealTo newMealTo = new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
-        newMealTo.setId(meal.getId());
-        return newMealTo;
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 
-    public static List<MealTo> getAllMeals(List<Meal> mealList, int caloriesPerDay) {
-        return getFilteredWithExcessInOnePass(mealList, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+    public static List<MealTo> getAllMeals(Collection<Meal> mealList, int caloriesPerDay) {
+        return getFilteredWithExcessInOnePass2(mealList, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 }
