@@ -7,11 +7,10 @@ import ru.javawebinar.topjava.model.AbstractNamedEntity;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
 
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
@@ -46,16 +45,15 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        log.info("getAll");
         List<User> userList = new ArrayList<>(repository.values());
-        userList.sort(Comparator.comparing(AbstractNamedEntity::getName));//.thenComparing(Comparator.comparing(User::getId)));
+        userList.sort(Comparator.comparing(AbstractNamedEntity::getName).thenComparing((AbstractNamedEntity::getId)));
+        log.info("getAll {}", userList);
         return userList;
     }
 
     @Override
     public User getByEmail(String email) {
-        User user = null;
-        user = repository.values().stream().filter(x->x.getEmail().equals(email)).findFirst().get();
+        User user = repository.values().stream().filter(x->x.getEmail().equals(email)).findFirst().orElse(null);
         log.info("getByEmail {}", user);
         return user;
     }

@@ -21,6 +21,7 @@ public class SpringMain {
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ROLE_ADMIN));
             System.out.println(" ");
             adminUserController.getByMail("aka@mail.ru");
+            adminUserController.getAll();
 
             System.out.println("Bean definition names meals: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);

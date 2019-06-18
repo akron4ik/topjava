@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +49,7 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public List<MealTo> getAllFilter(int userId, LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate) {
-        return new ArrayList<>(repository.getAllFilter(userId, startTime, endTime, startDate, endDate));
+    public List<Meal> getAllFilter(int userId, LocalDate startDate, LocalDate endDate) {
+        return new ArrayList<>(repository.getAllFilter(userId, startDate, endDate));
     }
 }
