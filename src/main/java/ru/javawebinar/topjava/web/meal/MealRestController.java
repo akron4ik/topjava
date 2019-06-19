@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.util.List;
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 
@@ -25,7 +26,7 @@ public class MealRestController {
 
     public Meal create(Meal meal){
         log.info("create {}", meal);
-        //checkNew(meal);
+        checkNew(meal);
         return service.create(meal, authUserId());
     }
 
