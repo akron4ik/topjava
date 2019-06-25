@@ -37,14 +37,14 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = mealService.get(100000, USER_ID);
-        MealTestData.assertMatch(meal, MEAL1);
+        Meal meal = mealService.get(MEAL1_USER.getId(), USER_ID);
+        MealTestData.assertMatch(meal, MEAL1_USER);
     }
 
     @Test
     public void delete() {
-        mealService.delete(100000, USER_ID);
-        MealTestData.assertMatch(mealService.getAll(USER_ID), MEAL3, MEAL2);
+        mealService.delete(MEAL1_USER.getId(), USER_ID);
+        MealTestData.assertMatch(mealService.getAll(USER_ID), MEAL3_USER, MEAL2_USER);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class MealServiceTest {
         LocalDate start = LocalDate.of(2015, Month.MAY, 30);
         LocalDate end = LocalDate.of(2015, Month.MAY, 30);
         List<Meal> result = mealService.getBetweenDates(start, end, USER_ID);
-        assertMatch(result, MEAL3, MEAL2, MEAL1);
+        assertMatch(result, MEAL3_USER, MEAL2_USER, MEAL1_USER);
     }
 
     @Test
@@ -60,25 +60,23 @@ public class MealServiceTest {
         LocalDateTime start = LocalDateTime.of(2015, Month.MAY, 30, 13, 0);
         LocalDateTime end = LocalDateTime.of(2015, Month.MAY, 30, 20, 0);
         List<Meal> result = mealService.getBetweenDateTimes(start, end, USER_ID);
-        assertMatch(result, MEAL3, MEAL2);
+        assertMatch(result, MEAL3_USER, MEAL2_USER);
     }
 
     @Test
     public void getAll() {
         List<Meal> mealListOne = mealService.getAll(USER_ID);
-        List<Meal> mealListTwo = mealService.getAll(ADMIN_ID);
-        MealTestData.assertMatch(mealListOne, MEAL3, MEAL2, MEAL1);
-        MealTestData.assertMatch(mealListTwo, MEAL6, MEAL5, MEAL4);
+        MealTestData.assertMatch(mealListOne, MEAL3_USER, MEAL2_USER, MEAL1_USER);
 
     }
 
     @Test
     public void update() {
-        Meal updated = new Meal(MEAL1);
+        Meal updated = new Meal(MEAL1_USER);
         updated.setDescription("Fastfood");
         updated.setCalories(666);
         mealService.update(updated, USER_ID);
-        assertMatch(mealService.get(100000, USER_ID), updated);
+        assertMatch(mealService.get(MEAL1_USER.getId(), USER_ID), updated);
     }
 
     @Test
@@ -86,25 +84,25 @@ public class MealServiceTest {
         Meal meal = new Meal(null, LocalDateTime.of(2015, Month.JULY, 15, 20, 0), "Dinner", 888);
         Meal createdMeal = mealService.create(meal, USER_ID);
         meal.setId(createdMeal.getId());
-        assertMatch(mealService.getAll(USER_ID), meal, MEAL3, MEAL2, MEAL1);
+        assertMatch(mealService.getAll(USER_ID), meal, MEAL3_USER, MEAL2_USER, MEAL1_USER);
 
     }
 
     @Test(expected = NotFoundException.class)
     public void getAlien(){
-        mealService.get(100000, ADMIN_ID);
+        mealService.get(MEAL1_USER.getId(), ADMIN_ID);
 
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteAlien(){
-        mealService.delete(100000, ADMIN_ID);
+        mealService.delete(MEAL1_USER.getId(), ADMIN_ID);
     }
 
     @Test(expected = NotFoundException.class)
     public void updateAlien(){
-        Meal updated = new Meal(MEAL1);
-        Meal up = mealService.get(updated.getId(), ADMIN_ID);
-        mealService.update(up, ADMIN_ID);
+        Meal updated = MEAL4_ADMIN;
+        updated.setDescription("updated meal");
+        mealService.update(updated, USER_ID);
     }
 }
