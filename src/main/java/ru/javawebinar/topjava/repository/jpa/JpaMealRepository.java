@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -8,8 +9,6 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +29,13 @@ public class JpaMealRepository implements MealRepository {
             return meal;
         }
         else{
-            return em.merge(meal);
+            Meal mealUp = em.find(Meal.class, meal.getId());
+            if(mealUp.getUser().getId() == userId) {
+                return em.merge(meal);
+            }
+            else{
+                return null;
+            }
         }
     }
     @Override
@@ -45,7 +50,11 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return em.find(Meal.class, id);
+        List<Meal> result = em.createNamedQuery(Meal.GET, Meal.class)
+                .setParameter("user_id", userId)
+                .setParameter("id", id)
+                .getResultList();
+        return DataAccessUtils.singleResult(result);
     }
 
     @Override
@@ -57,17 +66,12 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        /*return  em.createQuery("SELECT e FROM Meal e WHERE e.user.id=:user_id AND e.dateTime BETWEEN :startDate AND :endDate ORDER BY e.dateTime DESC")
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate)
+        return  em.createNamedQuery(Meal.GET_BETWEEN, Meal.class)
                 .setParameter("user_id", userId)
-                .getResultList();*/
-        /*return  em.createQuery("SELECT e FROM Meal e WHERE e.user.id=:user_id AND e.dateTime BETWEEN :startDate AND :endDate")
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate)
-                .setParameter("user_id", userId)
-                .getResultList();*/
-        return null;
+                .setParameter(1, startDate)
+                .setParameter(2, endDate)
+                .getResultList();
+
     }
 
 }
