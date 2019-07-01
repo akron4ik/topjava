@@ -2,8 +2,11 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.*;
 import org.junit.rules.ExpectedException;
-import org.junit.rules.TestName;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -11,12 +14,10 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.List;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -29,9 +30,8 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    private long start;
-    private long end;
-    private static Map<String, Long> res = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static List<String> res = new ArrayList<>();
 
     @Autowired
     private MealService service;
@@ -40,25 +40,20 @@ public class MealServiceTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Rule
-    public TestName testName = new TestName();
+    public Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            StringBuilder s = new StringBuilder();
+            s.append("Test -> ").append(description.getMethodName()).append(" <- was performed ").append(nanos / 1000000).append(" milliseconds.");
+            log.info((char) 27 + "[33m" + s + (char)27 + "[0m" +"\n");
+            res.add(s.toString());
 
-    @Before
-    public void start() {
-        start = System.currentTimeMillis();
-    }
-
-    @After
-    public void end() {
-        end = System.currentTimeMillis() - start;
-        System.out.println("Test "+ testName.getMethodName() + " was preformed " + end + " milliseconds." + "\n");
-        res.put(testName.getMethodName(), end);
-    }
+        }
+    };
 
     @AfterClass
     public static void result(){
-        res.forEach((k,v)-> System.out.println("TEST "+ k + " WAS PERFORMED " + v + " MILLISECONDS"));
-        System.out.println("");
-
+        res.forEach(s -> log.info((char) 27 + "[35m" + s + (char)27 + "[0m" +"\n"));
     }
 
     @Test
@@ -67,13 +62,15 @@ public class MealServiceTest {
         assertMatch(service.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNotFound() throws Exception {
+        exception.expect(NotFoundException.class);
         service.delete(1, USER_ID);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNotOwn() throws Exception {
+        exception.expect(NotFoundException.class);
         service.delete(MEAL1_ID, ADMIN_ID);
     }
 
