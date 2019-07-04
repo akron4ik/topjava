@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -43,10 +45,14 @@ public class MealServiceTest {
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            StringBuilder s = new StringBuilder();
+            /*StringBuilder s = new StringBuilder();
             s.append("Test -> ").append(description.getMethodName()).append(" <- was performed ").append(nanos / 1000000).append(" milliseconds.");
-            log.info((char) 27 + "[33m" + s + (char)27 + "[0m" +"\n");
-            res.add(s.toString());
+            log.info((char) 27 + "[33m" + s + (char)27 + "[0m" +"\n");*/
+            String s = String.format("Test -> %s was performed %d milliseconds", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            res.add(s);
+            log.info(s);
+
+            //log.info(String.format("Test -> %s was performed %d milliseconds", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos)));
 
         }
     };
@@ -54,6 +60,7 @@ public class MealServiceTest {
     @AfterClass
     public static void result(){
         res.forEach(s -> log.info((char) 27 + "[35m" + s + (char)27 + "[0m" +"\n"));
+
     }
 
     @Test
