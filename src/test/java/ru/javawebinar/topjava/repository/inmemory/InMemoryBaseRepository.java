@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.AbstractBaseEntity;
-
+import ru.javawebinar.topjava.model.User;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -37,4 +37,9 @@ public class InMemoryBaseRepository<T extends AbstractBaseEntity> {
     Collection<T> getCollection() {
         return entryMap.values();
     }
+
+    public User getMealByUser(int id) {
+        return null;
+    }
+
 }

@@ -1,20 +1,20 @@
 package ru.javawebinar.topjava.service;
+
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@ActiveProfiles({Profiles.DATAJPA})
-public class MealServiceTest extends ServiceTest {
 
+public abstract class MealServiceTest extends ServiceTest {
     @Autowired
     private MealService service;
 
@@ -88,4 +88,5 @@ public class MealServiceTest extends ServiceTest {
                 LocalDate.of(2015, Month.MAY, 30),
                 LocalDate.of(2015, Month.MAY, 30), USER_ID), MEAL3, MEAL2, MEAL1);
     }
+
 }
