@@ -70,8 +70,4 @@ public class JpaUserRepository implements UserRepository {
         return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
     }
 
-    @Override
-    public User getMealByUser(int id) {
-        return null;
-    }
 }

@@ -39,7 +39,6 @@ public class DataJpaUserRepository implements UserRepository {
         return crudRepository.findAll(SORT_NAME_EMAIL);
     }
 
-
     @Override
     public User getMealByUser(int id){
         return crudRepository.getMealByUser(id).orElse(null);
