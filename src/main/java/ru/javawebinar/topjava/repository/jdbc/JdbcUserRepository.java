@@ -76,4 +76,5 @@ public class JdbcUserRepository implements UserRepository {
     public User getMealByUser(int id) {
         return null;
     }
+
 }
