@@ -10,10 +10,6 @@
 
 <section>
     <h3><spring:message code="meal.title"/></h3>
-<%--<head>
-    <title>Meal</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>--%>
 
     <form method="get" action="meals">
         <input type="hidden" name="action" value="filter">
@@ -36,7 +32,7 @@
         <button type="submit">Filter</button>
 
     <hr/>
-    <a href="meals?action=create">Add Meal</a>
+    <a href="save">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -59,10 +55,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
+                <td><a href="update?id=${meal.id}">Update</a></td>
                 <td><a href="delete?id=${meal.id}">Delete</a></td>
-                <%--<td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>--%>
-                <%--<td><a href="meals?id=${meal.id}">Delete</a></td>--%>
             </tr>
         </c:forEach>
     </table>
