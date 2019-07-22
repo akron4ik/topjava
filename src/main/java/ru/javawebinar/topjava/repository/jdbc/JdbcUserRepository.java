@@ -46,7 +46,6 @@ public class JdbcUserRepository implements UserRepository {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
         List<Role> userRoles = new ArrayList<>(user.getRoles());
         String sqlSave = "INSERT INTO user_roles VALUES (?, ?)";
-        String sqlUpdate = " ";
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
@@ -66,7 +65,7 @@ public class JdbcUserRepository implements UserRepository {
         }
         else if (namedParameterJdbcTemplate.update(
                 "UPDATE users SET name=:name, email=:email, password=:password, " +
-                        "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", parameterSource) != 0) {
+                        "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", parameterSource) == 0){
             return null;
         }
         return user;

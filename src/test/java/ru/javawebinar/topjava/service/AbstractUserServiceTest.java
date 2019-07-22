@@ -1,19 +1,18 @@
 package ru.javawebinar.topjava.service;
 
+import org.assertj.core.api.Assertions;
 import org.junit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
 import javax.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -85,6 +84,12 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     public void getAll() throws Exception {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
+    }
+
+    @Test
+    public void testRoles() throws Exception{
+        User user = ADMIN;
+        Assertions.assertThat(user.getRoles()).containsOnly(ROLES);
     }
 
     @Test
