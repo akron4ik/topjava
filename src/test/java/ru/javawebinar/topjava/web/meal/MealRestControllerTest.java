@@ -78,13 +78,13 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetBetween() throws Exception {
-        ResultActions actions = mockMvc.perform(post(REST_MEALS_URL + "filter" + "?startDate=2015-05-31&endDate=2015-05-31&startTime=10:00&endTime=13:00")
+        ResultActions actions = mockMvc.perform(post(REST_MEALS_URL + "filter" + "?startDate=2015-05-31T10:00:00&endDate=2015-05-31T13:00:00")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
          String json = getContent(actions.andReturn());
-         List<MealTo> actual = readValues(json, MealTo.class);
-         List<MealTo> expected = MealsUtil.getFilteredWithExcess(mealService.getBetweenDates(LocalDate.of(2015, 05, 31), LocalDate.of(2015, 05, 31), USER_ID)
+         List<MealTo> expected = readValues(json, MealTo.class);
+         List<MealTo> actual = MealsUtil.getFilteredWithExcess(mealService.getBetweenDates(LocalDate.of(2015, 05, 31), LocalDate.of(2015, 05, 31), USER_ID)
                  , 2000, LocalTime.of( 10,00), LocalTime.of(13,00));
 
          assertMatch(actual, expected);
