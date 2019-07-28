@@ -3,14 +3,10 @@ package ru.javawebinar.topjava.web.meal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.web.SecurityUtil;
-
-import java.awt.image.renderable.RenderedImageFactory;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -55,13 +51,13 @@ public class MealRestController extends AbstractMealController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @GetMapping("/filter")
-    public List<MealTo> getBetween(@RequestParam(name = "startDate")String startdate, @RequestParam(name = "endDate")String enddate, @RequestParam(name = "startTime")String starttime, @RequestParam(name = "endtime")String endtime){
-        LocalDate startDate = parseLocalDate(startdate);
-        LocalDate endDate = parseLocalDate(enddate);
-        LocalTime startTime = parseLocalTime(starttime);
-        LocalTime endTime = parseLocalTime(endtime);
-        return super.getBetween(startDate, startTime, endDate, endTime);
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<MealTo> getBetween(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String startTime, @RequestParam String endTime){
+        LocalDate startdate = parseLocalDate(startDate);
+        LocalDate enddate = parseLocalDate(endDate);
+        LocalTime starttime = parseLocalTime(startTime);
+        LocalTime endtime = parseLocalTime(endTime);
+        return super.getBetween(startdate, starttime, enddate, endtime);
     }
 
 
