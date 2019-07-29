@@ -9,13 +9,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.DateTimeConverter;
+
 import java.net.URI;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = MealRestController.REST_MEALS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -71,14 +72,13 @@ public class MealRestController extends AbstractMealController {
     }
     //home work optional
     @PostMapping(value = "/filtered", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<MealTo> getBetween(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String startTime, @RequestParam String endTime) throws ParseException {
+    public List<MealTo> getBetween(@RequestParam(defaultValue = "0001-01-01") String startDate, @RequestParam(defaultValue = "3000-01-01") String endDate, @RequestParam(defaultValue = "00:00:00") String startTime, @RequestParam(defaultValue = "23:59:59") String endTime) throws ParseException {
         DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-        LocalDate startdate = dateTimeConverter.parse(startDate, Locale.getDefault()).toLocalDate();
-        LocalDate enddate = dateTimeConverter.parse(endDate, Locale.getDefault()).toLocalDate();
-        LocalTime starttime = dateTimeConverter.parse(startTime, Locale.getDefault()).toLocalTime();
-        LocalTime endtime = dateTimeConverter.parse(endTime, Locale.getDefault()).toLocalTime();
-
+        LocalDate startdate = Objects.requireNonNull(dateTimeConverter.convertDate(startDate));
+        LocalDate enddate = Objects.requireNonNull(dateTimeConverter.convertDate(endDate));
+        LocalTime starttime = Objects.requireNonNull(dateTimeConverter.convertTime(startTime));
+        LocalTime endtime = Objects.requireNonNull(dateTimeConverter.convertTime(endTime));
         return super.getBetween(startdate, starttime, enddate, endtime);
     }
 
