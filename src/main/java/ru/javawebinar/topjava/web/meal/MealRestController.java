@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.DateTimeConverter;
-
 import java.net.URI;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,12 +19,6 @@ import java.util.Objects;
 @RequestMapping(value = MealRestController.REST_MEALS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealRestController extends AbstractMealController {
     public static final String REST_MEALS_URL = "/rest/meals";
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime localStartDateTime;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime localEndDateTime;
 
     @GetMapping
     public List<MealTo> getAll(){
@@ -61,25 +52,18 @@ public class MealRestController extends AbstractMealController {
     }
     //home work base
     @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<MealTo> getBetween(@RequestParam String startDate, @RequestParam String endDate){
-        localStartDateTime = LocalDateTime.parse(startDate);
-        localEndDateTime = LocalDateTime.parse(endDate);
-        LocalDate startdate = localStartDateTime.toLocalDate();
-        LocalDate enddate = localEndDateTime.toLocalDate();
-        LocalTime starttime = localStartDateTime.toLocalTime();
-        LocalTime endtime = localEndDateTime.toLocalTime();
-        return super.getBetween(startdate, starttime, enddate, endtime);
+    public List<MealTo> getBetween(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate){
+        return super.getBetween(startDate.toLocalDate(), startDate.toLocalTime(), endDate.toLocalDate(), endDate.toLocalTime());
     }
     //home work optional
     @PostMapping(value = "/filtered", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<MealTo> getBetween(@RequestParam(defaultValue = "0001-01-01") String startDate, @RequestParam(defaultValue = "3000-01-01") String endDate, @RequestParam(defaultValue = "00:00:00") String startTime, @RequestParam(defaultValue = "23:59:59") String endTime) throws ParseException {
-        DateTimeConverter dateTimeConverter = new DateTimeConverter();
+    public List<MealTo> getBetween(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam LocalTime startTime, @RequestParam LocalTime endTime) {
 
-        LocalDate startdate = Objects.requireNonNull(dateTimeConverter.convertDate(startDate));
-        LocalDate enddate = Objects.requireNonNull(dateTimeConverter.convertDate(endDate));
-        LocalTime starttime = Objects.requireNonNull(dateTimeConverter.convertTime(startTime));
-        LocalTime endtime = Objects.requireNonNull(dateTimeConverter.convertTime(endTime));
-        return super.getBetween(startdate, starttime, enddate, endtime);
+        LocalDate startdate = Objects.requireNonNull(startDate);
+        LocalDate enddate = Objects.requireNonNull(endDate);
+        LocalTime starttime = Objects.requireNonNull(startTime);
+        LocalTime endtime = Objects.requireNonNull(endTime);
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 
 
