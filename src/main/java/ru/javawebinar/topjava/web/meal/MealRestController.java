@@ -50,13 +50,9 @@ public class MealRestController extends AbstractMealController {
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
-    //home work base
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<MealTo> getBetween(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate){
-        return super.getBetween(startDate.toLocalDate(), startDate.toLocalTime(), endDate.toLocalDate(), endDate.toLocalTime());
-    }
+
     //home work optional
-    @GetMapping(value = "/filtered")
+    @GetMapping(value = "/filter")
     public List<MealTo> getBetween(@RequestParam(required = false) LocalDate startDate,
                                    @RequestParam(required = false) LocalDate endDate,
                                    @RequestParam(required = false) LocalTime startTime,
