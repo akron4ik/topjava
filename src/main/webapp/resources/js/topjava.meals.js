@@ -1,3 +1,5 @@
+let filterData = $('#filter');
+
 $(function() {
     makeEditable({
         ajaxUrl:"ajax/profile/meals/",
@@ -26,10 +28,28 @@ $(function() {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
     }
     );
 });
+
+function clearFilter() {
+    filterData.find(":input").val("");
+    updateTable();
+}
+
+
+function filter() {
+    $.ajax({
+        type: "POST",
+        url: context.ajaxUrl+"filter",
+        data: filterData.serialize(),
+        dataType: "json"
+    }).done(function (data) {
+        context.datatableApi.clear().rows.add(data).draw();
+        successNoty("Filtered");
+    });
+}
