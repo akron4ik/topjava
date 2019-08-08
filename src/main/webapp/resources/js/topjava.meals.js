@@ -49,7 +49,7 @@ function filter() {
         data: filterData.serialize(),
         dataType: "json"
     }).done(function (data) {
-        context.datatableApi.clear().rows.add(data).draw();
+        updateTable(data);
         successNoty("Filtered");
     });
 }

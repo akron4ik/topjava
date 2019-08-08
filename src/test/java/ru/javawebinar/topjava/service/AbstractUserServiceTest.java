@@ -91,11 +91,16 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void setUserEnable() throws Exception{
+    void setUserEnable() throws Exception {
         User user = new User(USER);
         user.setEnabled(true);
         service.setUserEnable(USER_ID, true);
         assertMatch(service.get(USER_ID), user);
 
+    }
+
+    @Test
+    void enableNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> service.setUserEnable(1,true));
     }
 }
