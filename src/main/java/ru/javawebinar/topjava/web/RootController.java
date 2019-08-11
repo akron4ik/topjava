@@ -10,8 +10,8 @@ import ru.javawebinar.topjava.util.MealsUtil;
 @Controller
 public class RootController {
 
-    @Autowired
-    private MealService mealService;
+    /*@Autowired
+    private MealService mealService;*/
 
     @GetMapping("/")
     public String root() {
@@ -29,9 +29,7 @@ public class RootController {
     }
 
     @GetMapping("/meals")
-    public String getMeals(Model model) {
-        model.addAttribute("meals",
-                MealsUtil.getWithExcess(mealService.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay()));
-        return "meals";
+    public String getMeals() {
+       return "meals";
     }
 }

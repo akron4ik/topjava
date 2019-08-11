@@ -1,10 +1,17 @@
-tr[data-mealExcess="false"] {
+/*tr[data-mealExcess="false"] {
     color: green;
 }
 
 tr[data-mealExcess="true"] {
     color: blue;
+}*/
+.green{
+    color: #2f9635;
 }
+.blue{
+    color: blue;
+}
+
 
 .fa {
     cursor: pointer;
