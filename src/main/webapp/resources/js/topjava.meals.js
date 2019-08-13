@@ -14,35 +14,39 @@ function clearFilter() {
 
 function initDateTimePickers() {
     $.datetimepicker.setLocale('ru');
-    $('#startDate').datetimepicker({
-        timepicker: false,
-        format: 'Y-m-d'
+    $('#startDate, #endDate').datetimepicker({
+        format: 'Y-m-d',
+        onShow:function actual(){
+            this.setOptions({
+                maxDate:$('#endDate').val() ? $('#endDate').val() : false,
+                minDate:$('#startDate').val() ? $('#startDate').val() : false
+            })
+        },
+        timepicker: false
+
     });
-    $('#endDate').datetimepicker({
-        timepicker: false,
-        format: 'Y-m-d'
+    $('#startTime, #endTime').datetimepicker({
+        format: 'H:i',
+        onShow:function actual(){
+            this.setOptions({
+                maxDate:$('#endTime').val() ? $('#endTime').val() : false,
+                minDate:$('#startTime').val() ? $('#startTime').val() : false
+            })
+        },
+        datepicker: false
     });
-    $('#startTime').datetimepicker({
-        datepicker: false,
-        format: 'H:i'
-    });
-    $('#endTime').datetimepicker({
-        datepicker: false,
-        format: 'H:i'
-    });
+
     $('#dateTime').datetimepicker({
         format: 'Y-m-d H:i'
     });
 }
-function saveMeal() {
-    let data = '';
-    document.querySelectorAll('#editRow input').forEach(element => {
-        let value = element.name === 'dateTime' ? element.value.replace(' ', 'T') : element.value;
-        if (element.value !== '')
-            data += `${element.name}=${value}&`;
-    });
-    save(data.substring(0, data.length - 1));
+
+    function convertDate() {
+        let newDate = form.find('#dateTime').val().replace(' ', 'T');
+        form.find('#dateTime').val(newDate);
 }
+
+
 
 $(function () {
     makeEditable({
