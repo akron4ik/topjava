@@ -10,4 +10,10 @@ public class ErrorInfo {
         this.type = type;
         this.detail = detail;
     }
+
+    public ErrorInfo(String detail) {
+        this.detail = detail;
+        this.url = null;
+        this.type = null;
+    }
 }

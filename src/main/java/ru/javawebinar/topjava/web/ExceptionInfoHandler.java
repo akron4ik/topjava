@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,11 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorInfo handleValidationError(HttpServletRequest req, NotFoundException e) {
+        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    }
+
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
@@ -55,11 +61,17 @@ public class ExceptionInfoHandler {
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
-        if (logException) {
-            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
-        } else {
-            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
+        if(e.getMessage().contains("users_unique_email_idx")){
+           /* return new ErrorInfo(req.getRequestURL(), errorType, "User with this email already exists");*/
+            return new ErrorInfo("User with this email already exists");
         }
-        return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
+        else {
+            if (logException) {
+                log.error(errorType + " at request " + req.getRequestURL(), rootCause);
+            } else {
+                log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
+            }
+            return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
+        }
     }
 }
